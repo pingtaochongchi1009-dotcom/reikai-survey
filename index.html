@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#1f3a5f">
+<title>例会参加者アンケート｜佐賀県中小企業家同友会</title>
+<style>
+  :root {
+    color-scheme: light;
+    --navy: #1f3a5f;
+    --navy-dark: #152a46;
+    --navy-pale: #e9eef5;
+    --line: #c3cedb;
+    --text: #1c2733;
+    --muted: #55626f;
+    --bg: #f3f5f8;
+    --card: #ffffff;
+    --red: #c62828;
+    --red-pale: #fdecea;
+    --required: #b3261e;
+    --listening: #c62828;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", "Meiryo", sans-serif;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+  [hidden] { display: none !important; }
+
+  header {
+    background: var(--navy);
+    color: #fff;
+    padding: 20px 16px 22px;
+  }
+  .header-inner, main { max-width: 640px; margin: 0 auto; }
+  .org { margin: 0; font-size: 14px; opacity: .9; }
+  h1 { margin: 2px 0 0; font-size: 24px; line-height: 1.35; font-weight: 700; }
+  .event-line { margin: 10px 0 0; font-size: 19px; font-weight: 700; }
+
+  main { padding: 16px; }
+  .lead { margin: 0 0 16px; }
+
+  section.card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 16px;
+    margin-bottom: 16px;
+  }
+  h2 {
+    margin: 0 0 14px;
+    padding-bottom: 8px;
+    font-size: 20px;
+    color: var(--navy);
+    border-bottom: 2px solid var(--navy);
+  }
+  fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+  .field { margin-bottom: 22px; scroll-margin-top: 80px; }
+  .field:last-child { margin-bottom: 0; }
+  .q { display: block; padding: 0; margin-bottom: 8px; font-weight: 700; }
+  .tag {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 0 7px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.6;
+    vertical-align: 1px;
+  }
+  .tag.req { background: var(--required); color: #fff; }
+  .tag.opt { background: var(--navy-pale); color: var(--navy); }
+  .note { margin: 0 0 8px; font-size: 16px; color: var(--muted); }
+
+  input[type="text"], textarea {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--text);
+    font: inherit;
+  }
+  input[type="text"] { min-height: 52px; }
+  textarea { min-height: 128px; resize: vertical; }
+  textarea[readonly] { background: #fff6f5; border-color: var(--listening); }
+  input:focus-visible, textarea:focus-visible { outline: 3px solid #7fa3cf; outline-offset: 1px; }
+
+  /* 選択ボタン（参加区分・5段階） */
+  .choices { display: flex; gap: 8px; }
+  .choice { position: relative; flex: 1 1 0; min-width: 0; }
+  .choice input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .choice span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 56px;
+    padding: 4px;
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--navy);
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
+  }
+  .choices.scale .choice span { font-size: 22px; }
+  .choice input:checked + span { background: var(--navy); border-color: var(--navy); color: #fff; }
+  .choice input:focus-visible + span { outline: 3px solid #7fa3cf; outline-offset: 1px; }
+  .scale-labels {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    margin-top: 6px;
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--muted);
+  }
+  .scale-labels span:nth-child(2) { text-align: center; }
+  .scale-labels span:nth-child(3) { text-align: right; }
+
+  /* 音声入力 */
+  .voice-row { display: flex; gap: 8px; align-items: stretch; }
+  .voice-row textarea { flex: 1 1 auto; min-width: 0; }
+  .mic {
+    flex: 0 0 76px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--navy);
+    color: #fff;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .mic .icon { font-size: 34px; line-height: 1.1; }
+  .mic.on { background: var(--listening); }
+  .mic:focus-visible { outline: 3px solid #7fa3cf; outline-offset: 1px; }
+  .listening-text { margin: 6px 0 0; color: var(--listening); font-size: 16px; font-weight: 700; }
+  .voice-help {
+    margin: 0 0 14px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--navy-pale);
+    font-size: 16px;
+  }
+
+  .err { margin: 6px 0 0; color: var(--red); font-size: 16px; font-weight: 700; }
+  .field.invalid input[type="text"], .field.invalid .choice span { border-color: var(--red); }
+
+  .privacy { margin: 0 0 12px; font-size: 16px; color: var(--muted); }
+  .form-error {
+    margin: 0 0 12px;
+    padding: 12px;
+    border-radius: 8px;
+    background: var(--red-pale);
+    color: var(--red);
+    font-size: 17px;
+    font-weight: 700;
+  }
+  .submit {
+    display: block;
+    width: 100%;
+    min-height: 64px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--navy);
+    color: #fff;
+    font: inherit;
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .submit:active { background: var(--navy-dark); }
+  .submit:disabled { background: #8a97a6; cursor: default; }
+
+  .done { padding: 28px 16px; text-align: center; }
+  .done .mark { margin: 0 0 8px; font-size: 44px; line-height: 1; color: var(--navy); }
+  .done p { margin: 0; font-size: 20px; font-weight: 700; }
+  .honeypot { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <p class="org">佐賀県中小企業家同友会</p>
+    <h1>例会参加者アンケート</h1>
+    <p class="event-line" id="eventLine" hidden></p>
+  </div>
+</header>
+
+<main>
+  <noscript><p class="form-error">このアンケートはJavaScriptが必要です。ブラウザの設定を確認してください。</p></noscript>
+
+  <form id="form" novalidate>
+    <section class="card">
+      <h2>基本情報</h2>
+      <fieldset class="field" id="f-category">
+        <legend class="q">参加区分<span class="tag req">必須</span></legend>
+        <div class="choices" id="categoryChoices"></div>
+        <p class="err" hidden></p>
+      </fieldset>
+
+      <div id="basicFields" hidden>
+        <p class="note" id="memberNote" hidden>氏名は空欄でも回答できます</p>
+        <div class="field" id="f-name">
+          <label class="q" for="name">氏名<span class="tag" data-need></span></label>
+          <input type="text" id="name" autocomplete="name" maxlength="100">
+          <p class="err" hidden></p>
+        </div>
+        <div class="field" id="f-company">
+          <label class="q" for="company">会社名<span class="tag" data-need></span></label>
+          <input type="text" id="company" autocomplete="organization" maxlength="100">
+          <p class="err" hidden></p>
+        </div>
+        <div class="field" id="f-contact" data-guest hidden>
+          <label class="q" for="contact">連絡先（メールまたは電話）<span class="tag opt">任意</span></label>
+          <input type="text" id="contact" autocomplete="email" maxlength="200">
+        </div>
+      </div>
+    </section>
+
+    <div id="rest" hidden>
+      <section class="card">
+        <h2>例会の評価</h2>
+        <div id="ratings"></div>
+      </section>
+
+      <section class="card">
+        <h2>ご記入ください</h2>
+        <p class="voice-help" data-voice-help hidden>キーボードのマイクボタンを押すと話して入力できます</p>
+        <div class="field" id="f-noticed">
+          <label class="q" for="noticed">上記について気づいたこと<span class="tag opt">任意</span></label>
+          <div class="voice-row"><textarea id="noticed" data-voice maxlength="2000"></textarea></div>
+          <p class="err" hidden></p>
+        </div>
+        <div class="field" id="f-learned">
+          <label class="q" for="learned">学んだこと<span class="tag opt">任意</span></label>
+          <div class="voice-row"><textarea id="learned" data-voice maxlength="2000"></textarea></div>
+          <p class="err" hidden></p>
+        </div>
+        <div class="field" id="f-action">
+          <label class="q" for="action">実行すること<span class="tag opt">任意</span></label>
+          <div class="voice-row"><textarea id="action" data-voice maxlength="2000" placeholder="例：来月までに◯◯をやってみる"></textarea></div>
+          <p class="err" hidden></p>
+        </div>
+      </section>
+
+      <section class="card" data-guest hidden>
+        <h2>ゲスト・ビジターの方へ</h2>
+        <p class="voice-help" data-voice-help hidden>キーボードのマイクボタンを押すと話して入力できます</p>
+        <div class="field" id="f-impression">
+          <label class="q" for="impression">感想<span class="tag opt">任意</span></label>
+          <div class="voice-row"><textarea id="impression" data-voice maxlength="2000"></textarea></div>
+          <p class="err" hidden></p>
+        </div>
+        <div id="intentArea"></div>
+      </section>
+
+      <div class="honeypot" aria-hidden="true">
+        <label>ウェブサイト（入力しないでください）<input type="text" id="website" tabindex="-1" autocomplete="off"></label>
+      </div>
+
+      <p class="privacy" data-guest hidden>ご記入いただいた情報は、例会の改善と同友会からのご案内にのみ使用します</p>
+      <p class="form-error" id="formError" role="alert" hidden></p>
+      <button class="submit" id="submit" type="submit">送信する</button>
+    </div>
+  </form>
+
+  <section class="card done" id="done" tabindex="-1" hidden>
+    <p class="mark" aria-hidden="true">✓</p>
+    <p>ご回答ありがとうございました。<br>次回例会でお会いしましょう</p>
+  </section>
+</main>
+
+<script>
+/* ============================================================
+   ▼ 設定：Apps Script で発行されたURLを "" の中に貼り付けます
+   ============================================================ */
+const GAS_URL = "https://script.google.com/macros/s/AKfycbyw7NbBsedp8HT0Lw5D2ySORdh3EkMr73fx6z0amoaPoN8Zrg3Q2Q_Zr1VQS5snRToYBA/exec";
+/* ============================================================ */
+
+const MAX_TEXT = 2000;
+const CATEGORIES = ["会員", "ゲスト", "ビジター"];
+const RATINGS = [
+  { id: "rEvent", label: "例会の評価" },
+  { id: "rReport", label: "報告内容" },
+  { id: "rDiscussion", label: "グループ討論" },
+  { id: "rVenue", label: "進行・設営・会場" }
+];
+const RATING_SCALE = ["1＝不満", "3＝ふつう", "5＝大変満足"];
+const TEXT_FIELDS = ["noticed", "learned", "action", "impression"];
+
+const $ = (id) => document.getElementById(id);
+const form = $("form");
+const submitButton = $("submit");
+const formError = $("formError");
+const guestParts = document.querySelectorAll("[data-guest]");
+
+/* ---------- 例会名・開催日（URLから取得） ---------- */
+const params = new URLSearchParams(location.search);
+const eventName = (params.get("event") || "").trim().slice(0, 100);
+const eventDate = readDate(params.get("date") || "");
+
+function readDate(value) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!m) return null;
+  const y = +m[1], mo = +m[2], d = +m[3];
+  const dt = new Date(y, mo - 1, d);
+  if (dt.getMonth() !== mo - 1 || dt.getDate() !== d) return null;
+  return { text: value, month: mo, day: d };
+}
+
+const eventLabel = [eventDate ? `${eventDate.month}月${eventDate.day}日` : "", eventName]
+  .filter(Boolean).join(" ");
+if (eventLabel) {
+  $("eventLine").textContent = eventLabel;
+  $("eventLine").hidden = false;
+}
+
+/* ---------- 選択ボタンを作る ---------- */
+function choiceButtons(container, name, values) {
+  values.forEach((value) => {
+    const label = document.createElement("label");
+    label.className = "choice";
+    const input = document.createElement("input");
+    input.type = "radio";
+    input.name = name;
+    input.value = value;
+    const face = document.createElement("span");
+    face.textContent = value;
+    label.append(input, face);
+    container.append(label);
+  });
+}
+
+function ratingField(parent, id, labelText, scale) {
+  const field = document.createElement("fieldset");
+  field.className = "field";
+  field.id = "f-" + id;
+
+  const legend = document.createElement("legend");
+  legend.className = "q";
+  legend.textContent = labelText;
+  const tag = document.createElement("span");
+  tag.className = "tag req";
+  tag.textContent = "必須";
+  legend.append(tag);
+
+  const choices = document.createElement("div");
+  choices.className = "choices scale";
+  choiceButtons(choices, id, ["1", "2", "3", "4", "5"]);
+
+  const labels = document.createElement("div");
+  labels.className = "scale-labels";
+  scale.forEach((text) => {
+    const span = document.createElement("span");
+    span.textContent = text;
+    labels.append(span);
+  });
+
+  const err = document.createElement("p");
+  err.className = "err";
+  err.hidden = true;
+
+  field.append(legend, choices, labels, err);
+  parent.append(field);
+}
+
+choiceButtons($("categoryChoices"), "category", CATEGORIES);
+RATINGS.forEach((r) => ratingField($("ratings"), r.id, r.label, RATING_SCALE));
+ratingField($("intentArea"), "intent", "入会意思", ["1＝今は考えていない", "", "5＝入会したい"]);
+
+/* ---------- 参加区分による表示の切り替え ---------- */
+function selected(name) {
+  const input = form.querySelector(`input[name="${name}"]:checked`);
+  return input ? input.value : "";
+}
+function isGuest() {
+  const c = selected("category");
+  return c === "ゲスト" || c === "ビジター";
+}
+
+function applyCategory() {
+  const chosen = selected("category") !== "";
+  const guest = isGuest();
+  $("basicFields").hidden = !chosen;
+  $("rest").hidden = !chosen;
+  $("memberNote").hidden = guest;
+  guestParts.forEach((el) => { el.hidden = !guest; });
+  document.querySelectorAll("[data-need]").forEach((tag) => {
+    tag.textContent = guest ? "必須" : "任意";
+    tag.className = guest ? "tag req" : "tag opt";
+  });
+  ["f-name", "f-company", "f-intent"].forEach(clearError);
+}
+
+form.addEventListener("change", (e) => {
+  if (e.target.name === "category") applyCategory();
+  const field = e.target.closest(".field");
+  if (field) clearError(field.id);
+});
+form.addEventListener("input", (e) => {
+  const field = e.target.closest(".field");
+  if (field) clearError(field.id);
+});
+
+/* ---------- 入力チェック ---------- */
+function setError(fieldId, message) {
+  const field = $(fieldId);
+  field.classList.add("invalid");
+  const err = field.querySelector(".err");
+  err.textContent = message;
+  err.hidden = false;
+}
+function clearError(fieldId) {
+  const field = $(fieldId);
+  if (!field) return;
+  field.classList.remove("invalid");
+  const err = field.querySelector(".err");
+  if (err) err.hidden = true;
+}
+
+function validate() {
+  const bad = [];
+  const fail = (fieldId, message) => { setError(fieldId, message); bad.push(fieldId); };
+
+  if (!selected("category")) fail("f-category", "参加区分を選んでください");
+  if (isGuest()) {
+    if (!$("name").value.trim()) fail("f-name", "氏名を入力してください");
+    if (!$("company").value.trim()) fail("f-company", "会社名を入力してください");
+  }
+  RATINGS.forEach((r) => {
+    if (!selected(r.id)) fail("f-" + r.id, r.label + "を選んでください");
+  });
+  TEXT_FIELDS.forEach((id) => {
+    if ($(id).value.trim().length > MAX_TEXT) {
+      fail("f-" + id, `${MAX_TEXT}文字以内にしてください（いま${$(id).value.trim().length}文字）`);
+    }
+  });
+  if (isGuest() && !selected("intent")) fail("f-intent", "入会意思を選んでください");
+
+  if (bad.length) {
+    const first = $(bad[0]);
+    first.scrollIntoView({ behavior: "smooth", block: "center" });
+    const input = first.querySelector("input, textarea");
+    if (input) input.focus({ preventScroll: true });
+    return false;
+  }
+  return true;
+}
+
+/* ---------- 音声入力 ---------- */
+const SpeechRecognizer = window.SpeechRecognition || window.webkitSpeechRecognition;
+// LINEなどアプリ内のブラウザでは、マイクボタンがあっても正しく動かないことが多い
+const inAppBrowser = /\bLine\/|FBAN|FBAV|FB_IAB|Instagram|MicroMessenger|Twitter|; wv\)/i
+  .test(navigator.userAgent);
+
+const voice = {
+  available: !!SpeechRecognizer && !inAppBrowser,
+  recognizer: null, box: null, button: null,
+  base: "", wanted: false, gotResult: false, silentRuns: 0, waiters: []
+};
+const MAX_SILENT_RUNS = 3; // 無言のまま3回区切れたら自動で止める
+
+document.querySelectorAll("textarea[data-voice]").forEach((box) => {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "mic";
+  button.setAttribute("aria-label", "音声入力を開始");
+  button.innerHTML = '<span class="icon" aria-hidden="true">🎤</span><span class="mic-text">話す</span>';
+  button.addEventListener("click", () => onMicClick(box, button));
+  box.parentElement.append(button);
+
+  const status = document.createElement("p");
+  status.className = "listening-text";
+  status.setAttribute("aria-live", "polite");
+  status.hidden = true;
+  status.textContent = "聞き取り中… もう一度押すと止まります";
+  box.parentElement.after(status);
+  button.statusText = status;
+});
+
+function showVoiceHelp() {
+  voice.available = false;
+  document.querySelectorAll(".mic").forEach((b) => { b.hidden = true; });
+  document.querySelectorAll("[data-voice-help]").forEach((p) => { p.hidden = false; });
+}
+if (!voice.available) showVoiceHelp();
+
+function setMicState(button, on) {
+  button.classList.toggle("on", on);
+  button.querySelector(".mic-text").textContent = on ? "止める" : "話す";
+  button.setAttribute("aria-label", on ? "音声入力を停止" : "音声入力を開始");
+  button.statusText.hidden = !on;
+}
+
+function onMicClick(box, button) {
+  if (!voice.box) { startVoice(box, button); return; }
+  const sameBox = voice.box === box;
+  stopVoice().then(() => {
+    if (!sameBox && voice.available) startVoice(box, button);
+  });
+}
+
+function startVoice(box, button) {
+  voice.box = box;
+  voice.button = button;
+  voice.base = box.value;
+  voice.wanted = true;
+  voice.silentRuns = 0;
+  box.readOnly = true;
+  setMicState(button, true);
+  try {
+    runRecognizer();
+  } catch (err) {
+    finishVoice();
+    showVoiceHelp();
+  }
+}
+
+function runRecognizer() {
+  const rec = new SpeechRecognizer();
+  rec.lang = "ja-JP";
+  rec.continuous = true;
+  rec.interimResults = true;
+  voice.recognizer = rec;
+  voice.gotResult = false;
+
+  rec.onresult = (e) => {
+    if (rec !== voice.recognizer) return;
+    voice.gotResult = true;
+    voice.box.value = appendText(voice.base, readTranscript(e.results));
+    voice.box.scrollTop = voice.box.scrollHeight;
+  };
+  rec.onerror = (e) => {
+    if (rec !== voice.recognizer) return;
+    if (e.error === "no-speech" || e.error === "aborted") return;
+    // マイクが拒否された、通信できないなど：続けられないので案内に切り替える
+    finishVoice();
+    showVoiceHelp();
+  };
+  rec.onend = () => {
+    if (rec !== voice.recognizer) return;
+    voice.base = voice.box.value;
+    voice.recognizer = null;
+    if (voice.wanted) {
+      voice.silentRuns = voice.gotResult ? 0 : voice.silentRuns + 1;
+      if (voice.silentRuns < MAX_SILENT_RUNS) {
+        try { runRecognizer(); return; } catch (err) { /* 下で止める */ }
+      }
+    }
+    finishVoice();
+  };
+  rec.start();
+}
+
+// 機種によって途中結果が累積して返るため、前の結果を含むものは置き換える
+function readTranscript(results) {
+  const parts = [];
+  for (let i = 0; i < results.length; i++) {
+    const text = results[i][0].transcript.trim();
+    if (!text) continue;
+    const last = parts[parts.length - 1];
+    if (last && text.startsWith(last)) parts[parts.length - 1] = text;
+    else if (!last || !last.startsWith(text)) parts.push(text);
+  }
+  return parts.join("　");
+}
+
+function appendText(base, added) {
+  if (!added) return base;
+  if (!base || /\s$/.test(base)) return base + added;
+  return base + "　" + added;
+}
+
+function stopVoice() {
+  if (!voice.box) return Promise.resolve();
+  voice.wanted = false;
+  const rec = voice.recognizer;
+  return new Promise((resolve) => {
+    voice.waiters.push(resolve);
+    if (rec) { try { rec.stop(); } catch (err) { /* 止まっている */ } }
+    setTimeout(() => {
+      if (voice.box && voice.recognizer === rec) {
+        if (rec) { try { rec.abort(); } catch (err) { /* 止まっている */ } }
+        finishVoice();
+      }
+    }, 1500);
+  });
+}
+
+function finishVoice() {
+  if (voice.box) {
+    voice.box.readOnly = false;
+    setMicState(voice.button, false);
+  }
+  voice.box = voice.button = voice.recognizer = null;
+  voice.wanted = false;
+  voice.waiters.splice(0).forEach((resolve) => resolve());
+}
+
+/* ---------- 送信 ---------- */
+const submissionId = (crypto.randomUUID && crypto.randomUUID()) ||
+  Date.now().toString(36) + "-" + Math.random().toString(36).slice(2);
+let sending = false;
+
+function buildPayload() {
+  const guest = isGuest();
+  const payload = {
+    id: submissionId,
+    website: $("website").value,
+    event: eventName,
+    date: eventDate ? eventDate.text : "",
+    category: selected("category"),
+    name: $("name").value.trim(),
+    company: $("company").value.trim(),
+    contact: guest ? $("contact").value.trim() : "",
+    noticed: $("noticed").value.trim(),
+    learned: $("learned").value.trim(),
+    action: $("action").value.trim(),
+    impression: guest ? $("impression").value.trim() : "",
+    intent: guest ? selected("intent") : ""
+  };
+  RATINGS.forEach((r) => { payload[r.id] = selected(r.id); });
+  return payload;
+}
+
+async function send(payload) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 30000);
+  try {
+    // text/plain にすると事前確認の通信が発生せず、Apps Script で受け取れる
+    const response = await fetch(GAS_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload),
+      signal: controller.signal
+    });
+    const result = await response.json();
+    if (!result.ok) throw new Error("rejected");
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function showFormError(message) {
+  formError.textContent = message;
+  formError.hidden = false;
+}
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (sending) return;
+  sending = true;
+  submitButton.disabled = true;
+  formError.hidden = true;
+
+  await stopVoice();
+
+  if (!validate()) {
+    sending = false;
+    submitButton.disabled = false;
+    return;
+  }
+
+  if (!GAS_URL.startsWith("http")) {
+    showFormError("送信先が設定されていません（事務局の設定が必要です）");
+    sending = false;
+    submitButton.disabled = false;
+    return;
+  }
+
+  submitButton.textContent = "送信中…";
+  try {
+    await send(buildPayload());
+    form.hidden = true;
+    $("done").hidden = false;
+    window.scrollTo(0, 0);
+    $("done").focus({ preventScroll: true });
+  } catch (err) {
+    showFormError("送信できませんでした。入力内容は残っています。電波の良い場所で、もう一度送信してください");
+    formError.scrollIntoView({ behavior: "smooth", block: "center" });
+    submitButton.textContent = "もう一度送信する";
+    submitButton.disabled = false;
+    sending = false;
+  }
+});
+</script>
+</body>
+</html>
